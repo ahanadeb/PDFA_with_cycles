@@ -1,0 +1,70 @@
+digraph {
+	fake [style=invisible]
+	rankdir=LR
+	q0
+	q1
+	q2
+	q3
+	q4
+	q5
+	q6
+	q7
+	q8
+	q9
+	q10
+	q11
+	q12
+	q13
+	fake -> q0 [style=bold]
+	q0 -> q1 [label="110,  " color=black]
+	q0 -> q1 [label="011,  " color=black]
+	q1 -> q2 [label="N, 101" color=black]
+	q1 -> q2 [label="S, 101" color=black]
+	q1 -> q3 [label="E, 101" color=red]
+	q1 -> q2 [label="W, 101" color=black]
+	q2 -> q4 [label="W, 101" color=black]
+	q2 -> q4 [label="S, 101" color=black]
+	q2 -> q4 [label="N, 101" color=black]
+	q2 -> q4 [label="E, 101" color=red]
+	q3 -> q4 [label="S, 101" color=black]
+	q3 -> q5 [label="E, 101" color=red]
+	q3 -> q4 [label="W, 101" color=black]
+	q3 -> q4 [label="N, 101" color=black]
+	q4 -> q6 [label="E, 101" color=red]
+	q4 -> q6 [label="S, 101" color=black]
+	q4 -> q6 [label="W, 101" color=black]
+	q4 -> q6 [label="N, 101" color=black]
+	q5 -> q6 [label="W, 101" color=black]
+	q5 -> q7 [label="S, 101" color=black]
+	q5 -> q7 [label="N, 101" color=black]
+	q5 -> q8 [label="E, 101" color=red]
+	q6 -> q9 [label="S, 101" color=black]
+	q6 -> q10 [label="W, 101" color=black]
+	q6 -> q9 [label="W, 101" color=black]
+	q6 -> q11 [label="E, 101" color=red]
+	q6 -> q9 [label="N, 101" color=black]
+	q7 -> q11 [label="W, 101" color=black]
+	q7 -> q11 [label="N, 101" color=black]
+	q7 -> q11 [label="E, 101" color=red]
+	q7 -> q11 [label="S, 101" color=black]
+	q8 -> q11 [label="S, 101" color=black]
+	q8 -> q12 [label="E, 101" color=red]
+	q8 -> q11 [label="N, 101" color=black]
+	q8 -> q11 [label="W, 101" color=black]
+	q9 -> q13 [label="S, 101" color=black]
+	q9 -> q13 [label="N, 101" color=black]
+	q9 -> q13 [label="W, 101" color=black]
+	q9 -> q13 [label="E, 101" color=red]
+	q10 -> q13 [label="S, 101" color=black]
+	q10 -> q13 [label="E, 101" color=red]
+	q10 -> q13 [label="N, 101" color=black]
+	q10 -> q13 [label="W, 101" color=black]
+	q11 -> q13 [label="E, 101" color=red]
+	q11 -> q13 [label="S, 101" color=black]
+	q11 -> q13 [label="W, 101" color=black]
+	q11 -> q13 [label="N, 101" color=black]
+	q12 -> q13 [label="E, 010" color=black]
+	q12 -> q13 [label="W, 010" color=black]
+	q12 -> q13 [label="N, 010" color=red]
+	q12 -> q13 [label="S, 010" color=black]
+}

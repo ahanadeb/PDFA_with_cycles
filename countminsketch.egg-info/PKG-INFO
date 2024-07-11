@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: countminsketch
+Version: 0.2
+Summary: A minimalistic Count-min Sketch for Python
+Home-page: https://github.com/rafacarrascosa/countminsketch
+Author: Rafael Carrascosa
+Author-email: rafacarrascosa@gmail.com
+Keywords: countminsketch,count,counting,count min sketch,count-min sketch,randomized algorithm
+Classifier: Programming Language :: Python
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Utilities
