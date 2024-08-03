@@ -44,7 +44,7 @@ if __name__ == "__main__":
     print("optimal policy ", pdfa.policy)
     gr = render(pdfa, a_dict)
     #generate graph (change location)
-    gr.render("/Users/ahanadeb/Documents/books/RL/PhD/bisimulation/countminsketch/graphs/test_"+env+"_alpha_"+str(alpha))
+    gr.render("./graphs/test_"+env+"_alpha_"+str(alpha))
     tmaze = Tmaze_test(H - 1)
     tmaze.test(pdfa, 100, H)
 
