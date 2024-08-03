@@ -1,6 +1,4 @@
-import json
 from src.utils_pdfa.render import render
-from env.test_cookie_domain import test_cookie_domain
 from learn_pdfa import learn_pdfa
 from src.utils_pdfa.params import Params
 from src.utils_pdfa.rl_solve import solve_mdp, get_optimal_policy
@@ -9,14 +7,7 @@ from env.test_t_maze import Tmaze_test
 
 
 if __name__ == "__main__":
-
-    #set environment
-    # env = "cookie-domain"
-    # env ="basic-domain"
-    #env = "prison-guard"
-
     env = "t-maze"
-    #env="mini-hall"
     K = 5000 #number of episodes
     H = 5 #episode length
     k_length = 100
