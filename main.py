@@ -4,9 +4,15 @@ from src.utils_pdfa.params import Params
 from src.utils_pdfa.rl_solve import solve_mdp, get_optimal_policy
 from env.get_env import get_env
 from env.test_t_maze import Tmaze_test
-
+from env.loop_domain import LoopDomain
 
 if __name__ == "__main__":
+    loop = LoopDomain()
+    D, first_obs= loop.generate_trajs( 1,4)
+    print(first_obs, "here")
+    print(D)
+    brek
+
     env = "t-maze"
     K = 5000 #number of episodes
     H = 5 #episode length
