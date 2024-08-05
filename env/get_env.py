@@ -5,6 +5,7 @@ import pandas as pd
 from env.basic_domain import test_basic_domain
 from env.prison_guard import Prison_guard
 from env.t_maze import Tmaze
+from env.loop_domain import LoopDomain
 def get_env(env, K, H):
     if env == "cookie-domain":
         o_dict = {'blue': 1, 'white': 2, 'green': 3, 'red': 4, 'green cookie':5, 'blue cookie': 6 }
@@ -57,6 +58,13 @@ def get_env(env, K, H):
         return D.astype(int), first_obs, a_dict1, a_dict
 
 
+    elif env == "loop-domain":
+        a_dict={'a0':0, 'a1':1}
+        # a_dict1 = { 0: 'a0', 1: 'a1'}
+        loop = LoopDomain()
+        D, first_obs= loop.generate_trajs(K, H)
+
+        return D.astype(int), first_obs, a_dict
 
 
     else:

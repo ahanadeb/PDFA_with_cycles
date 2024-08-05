@@ -4,46 +4,33 @@ from src.utils_pdfa.params import Params
 from src.utils_pdfa.rl_solve import solve_mdp, get_optimal_policy
 from env.get_env import get_env
 from env.test_t_maze import Tmaze_test
-from env.loop_domain import LoopDomain
+from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    loop = LoopDomain()
-    D, first_obs= loop.generate_trajs( 1,4)
-    print(first_obs, "here")
-    print(D)
-    brek
+    K = 10
+    H = 4
+    A = 2
+    env = "loop-domain"
 
-    env = "t-maze"
-    K = 5000 #number of episodes
-    H = 5 #episode length
-    k_length = 100
-    A = 4  #action space
-    # set parameters
     alpha = 1.6
-    params = Params(0.8, 4, 2, 2, 0.1, alpha, 20,20, k_length)
+    params = Params(0.8, 4, 2, 2, 0.1, alpha, 20, 20, 5)
     #get Dataset D
-    D, first_obs, a_dict1, a_dict = get_env(env,K, H)
-    m = 100
-    for i in range(1):
-        pdfa, t, sta = learn_pdfa(K,H,D,first_obs, params, a_dict1,a_dict, A)
-        if t < m:
-            m=t
-            print("time ", m)
-            ns = sta
-    print("Time: ", m,  " States: ", ns)
+    D, first_obs, a_dict= get_env(env, K, H)
+
+    pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H)
+    #pdfa, t, sta = learn_pdfa(K, H, D, first_obs, params, a_dict1, a_dict, A)
     #brek
     print(pdfa.transitions)
     #render pdfa
-    pdfa= solve_mdp(pdfa, a_dict)
+    pdfa = solve_mdp(pdfa, a_dict)
     for s in pdfa.states:
         print(s.VA)
-    pdfa = get_optimal_policy(pdfa,a_dict1)
+    pdfa = get_optimal_policy(pdfa, a_dict1)
     print("optimal policy ", pdfa.policy)
     gr = render(pdfa, a_dict)
     #generate graph (change location)
-    gr.render("./graphs/test_"+env+"_alpha_"+str(alpha))
+    gr.render("./graphs/test_" + env + "_alpha_" + str(alpha))
     tmaze = Tmaze_test(H - 1)
     tmaze.test(pdfa, 100, H)
-
 
     #test_pdfa(pdfa, 100, 5)
