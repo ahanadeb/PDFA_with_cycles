@@ -1,14 +1,14 @@
-
-
 class State:
-    def __init__(self, s, t, n,A, h=None):
+    def __init__(self, s, t, A, c, h=None):
         self.name = s
         self.X = t
-        self.n = n
-        self.V=0
-        self.A =[0] * A
-        self.VA = [0]*A
+        self.V = 0
+        self.A = [0] * A
+        self.VA = [0] * A
+        self.c = c
         if not h:
             self.hist = []
+            self.n = 0 #number of times the state is visited
         else:
             self.hist = h
+            self.n = len(self.hist[0])
