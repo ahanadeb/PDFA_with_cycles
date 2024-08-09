@@ -20,7 +20,7 @@ def get_suffixes(D, q,q_prev, h):
     d1 = D[:, h, :]
     a = np.where(np.all(d1 == q, axis=1))
     a = remove_nc(a, q_prev.hist)
-    d_new = (D[:, h+1:, :]).astype(int)
+    d_new = (D[:, h:, :]).astype(int)
     d_new2 = d_new[a[0],:,:]
     d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
     fr = np.unique(d_new2, axis=0)

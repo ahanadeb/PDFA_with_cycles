@@ -3,8 +3,21 @@ from src.utils_pdfa.adact_utils import *
 from src.utils_pdfa.State import State
 from env.get_ao import get_r, get_o, get_a
 
-def get_initial_candidates(D, first_obs, A, pdfa, Q_c, Q_prev_list):
-    Q_prev_list[0] = []
+
+def initialise_Q(Q, H):
+    for h in range(H):
+        Q[h] = []
+    return Q
+
+
+def not_empty(Q):
+    for i in len(Q):
+        if Q[i]:
+            return True
+    return False
+
+
+def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
     candidates = get_first_obs(first_obs)
     print("candidates", candidates)
     for i in range(candidates.shape[0]):
@@ -12,9 +25,21 @@ def get_initial_candidates(D, first_obs, A, pdfa, Q_c, Q_prev_list):
         X = get_first_suffixes(D, first_obs, q_c)
         trajs = np.where(np.all(first_obs == q_c, axis=1))
         print("trajs", trajs, len(trajs[0]))
-        Q_c.append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
+        Q[0].append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
         Q_prev_list[0].append(pdfa.initial_state)
-    return Q_c, Q_prev_list
+    return Q, Q_prev_list
+
+
+def add_new_candidates(D, t, q, Q, Q_prev_list, A, pdfa):
+    q_prev = Q_prev_list[t][Q[t].index(q)]
+    candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
+    for i in range(candidates.shape[0]):
+        X = get_suffixes(D, candidates[i, :], q_prev, t)
+        trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
+        q = State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs)
+        Q[t + 1].append(q)
+        Q_prev_list[t + 1].append(q_prev)
+    return Q, Q_prev_list
 
 
 def get_max_qao(Q):
@@ -29,12 +54,11 @@ def get_max_qao(Q):
     return state, t
 
 
-def remove_candidate_from_Q(Q, Q_c, Q_prev_list, q, t):
-    Q_c.remove(q)
+def remove_candidate_from_Q(Q, Q_prev_list, q, t):
     del Q_prev_list[t][Q[t].index(q)]
     Q[t].remove(q)
 
-    return Q, Q_c
+    return Q, Q_prev_list
 
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
@@ -50,27 +74,33 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     Q = [None] * H  #list of lists for all candidates
     Q_final = [None] * H  # list of lists for final safe states
     Q_prev_list = [None] * H
-    Q_c = []  # Full candidate list
+    Q_prev_list = initialise_Q(Q_prev_list, H)
+    Q = initialise_Q(Q, H)
     # add initial pdfa state
     pdfa = PDFA(D, A, a_dict)
     q0 = pdfa.initial_state
     q0.hist = list(range(K + 1))
     # add first list of candidates
-    Q_c, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q_c, Q_prev_list)
-    Q[0] = Q_c
+    Q, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list)
     # after this Q_c becomes the list of all candidates
-    while Q_c:
+    while not_empty(Q):
         # get most occurring qao across all times
         # the time t wouldn't matter in the first case, you're not supposed to have all the q states from the start
         q_max, t_max = get_max_qao(Q)
         # remove it after promoting
-       # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
+        # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
         # get similar states by comparing to all times till t_max
         similar = []
+        # do similarity test with all previous time steps HERE you need to cahnge prefix and suffix
+
         # promote if no similar
+
         if not similar:
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
-            Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
+            Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
-            add_new_candidates(q_max,D, ) #how to know where the next candidate comes from
+            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A,
+                               pdfa)  #how to know where the next candidate comes from
+        #else:
+        # merge candidates
     return pdfa
