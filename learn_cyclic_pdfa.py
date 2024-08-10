@@ -11,9 +11,10 @@ def initialise_Q(Q, H):
 
 
 def not_empty(Q):
-    for i in len(Q):
-        if Q[i]:
-            return True
+    if Q:
+        for i in range(len(Q)):
+            if Q[i]:
+                return True
     return False
 
 
@@ -31,14 +32,12 @@ def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
 
 
 def add_new_candidates(D, t, q, Q, Q_prev_list, A, pdfa):
-    q_prev = Q_prev_list[t][Q[t].index(q)]
     candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
     for i in range(candidates.shape[0]):
-        X = get_suffixes(D, candidates[i, :], q_prev, t)
+        X = get_suffixes(D, candidates[i, :], q, t)
         trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
-        q = State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs)
-        Q[t + 1].append(q)
-        Q_prev_list[t + 1].append(q_prev)
+        Q[t + 1].append(State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs))
+        Q_prev_list[t + 1].append(q)
     return Q, Q_prev_list
 
 
@@ -119,5 +118,5 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             merge(similar[0], q_max, pdfa)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
 
-
+    print("pdfa transitions: ", pdfa.transitions)
     return pdfa
