@@ -2,6 +2,10 @@ from src.pdfa import PDFA
 from src.utils_pdfa.adact_utils import *
 from src.utils_pdfa.State import State
 from env.get_ao import get_r, get_o, get_a
+from typing import Iterable
+# if isinstance(my_item, Iterable):
+#     print(True)
+
 
 
 def initialise_Q(Q, H):
@@ -25,7 +29,6 @@ def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
         q_c = candidates[i, :]
         X = get_first_suffixes(D, first_obs, q_c)
         trajs = np.where(np.all(first_obs == q_c, axis=1))
-        print("trajs", trajs, len(trajs[0]))
         Q[0].append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
         Q_prev_list[0].append(pdfa.initial_state)
     return Q, Q_prev_list
@@ -46,10 +49,16 @@ def get_max_qao(Q):
     n = -1
     for i in range(len(Q)):
         if Q[i]:
-            for q in Q[i]:
-                if q.n > n:
+            if isinstance(Q[i], Iterable):
+                for q in Q[i]:
+                    if q.n > n:
+                        t = i
+                        state = q
+            else:
+                if Q[i].n > n:
                     t = i
-                    state = q
+                    state = Q[i]
+
     return state, t
 
 
@@ -68,6 +77,7 @@ def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
     #remove candidate from list
     return Q_final, Q
 
+
 def get_similar_states(q_max, t_max, Q):
     similar = []
     for t in range(t_max):
@@ -78,10 +88,10 @@ def get_similar_states(q_max, t_max, Q):
                     similar.append(q)
     return similar
 
+
 def merge(q1, q2, pdfa):
     q1 = merge_history(q1, q2)
     pdfa.add_transition(q1, get_a(q2), q2, get_o(q2), get_r(q2))
-
 
 
 def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
@@ -99,6 +109,7 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     # after this Q_c becomes the list of all candidates
     while not_empty(Q):
         # get most occurring qao across all times
+        print("here", Q)
         q_max, t_max = get_max_qao(Q)
         # remove it after promoting
         # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
@@ -112,7 +123,8 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
-            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)  # how to know where the next candidate comes from
+            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A,
+                               pdfa)  # how to know where the next candidate comes from
         else:
             # merge candidates
             merge(similar[0], q_max, pdfa)
