@@ -63,6 +63,10 @@ def get_max_qao(Q):
 
 
 def remove_candidate_from_Q(Q, Q_prev_list, q, t):
+    print("removing", q)
+    print("Q_prev", Q_prev_list)
+    print("Q", Q)
+    #THERE is a mismatch in the locaiton where we're adding q in Q CHECK
     del Q_prev_list[t][Q[t].index(q)]
     Q[t].remove(q)
 
@@ -107,9 +111,10 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     # add first list of candidates
     Q, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list)
     # after this Q_c becomes the list of all candidates
+    print("before starting ", Q)
     while not_empty(Q):
         # get most occurring qao across all times
-        print("here", Q)
+        # print("here", Q)
         q_max, t_max = get_max_qao(Q)
         # remove it after promoting
         # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
@@ -121,6 +126,7 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
 
         if not similar:
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
+            print("after adding", Q)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
             add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A,
