@@ -66,7 +66,7 @@ def remove_candidate_from_Q(Q, Q_prev_list, q, t):
     print("removing", q)
     print("Q_prev", Q_prev_list)
     print("Q", Q)
-    #THERE is a mismatch in the locaiton where we're adding q in Q CHECK
+    #THERE is a mismatch in the location where we're adding q in Q CHECK
     del Q_prev_list[t][Q[t].index(q)]
     Q[t].remove(q)
 
@@ -74,19 +74,19 @@ def remove_candidate_from_Q(Q, Q_prev_list, q, t):
 
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
-    if Q_final[t] == None:
-        Q_final[t] = []
     Q_final[t].append(q)
     pdfa.add_transition(Q_prev_list[t][Q[t].index(q)], get_a(q), q, get_o(q), get_r(q))
     #remove candidate from list
-    return Q_final, Q
+    return Q_final
 
 
-def get_similar_states(q_max, t_max, Q):
+def get_similar_states(q_max, t_max, Q_final):
     similar = []
-    for t in range(t_max):
-        if Q[t]:
-            for q in Q[t]:
+    print("Q_final", Q_final)
+    for t in range(1,t_max):
+        if Q_final[t]:
+            for q in Q_final[t]:
+                print("here2", q)
                 sim, threshold, v = test_distinct(q_max, q)
                 if sim:
                     similar.append(q)
@@ -104,33 +104,41 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     Q_prev_list = [None] * H
     Q_prev_list = initialise_Q(Q_prev_list, H)
     Q = initialise_Q(Q, H)
+    Q_final = initialise_Q(Q_final, H)
     # add initial pdfa state
     pdfa = PDFA(D, A, a_dict)
     q0 = pdfa.initial_state
+    Q_final[0].append(q0)
     q0.hist = list(range(K + 1))
     # add first list of candidates
     Q, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list)
     # after this Q_c becomes the list of all candidates
-    print("before starting ", Q)
+    print("before starting ", Q, Q_prev_list)
     while not_empty(Q):
         # get most occurring qao across all times
         # print("here", Q)
         q_max, t_max = get_max_qao(Q)
+        print("using candidate", q_max, " time, ", t_max)
         # remove it after promoting
         # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
         # get similar states by comparing to all times till t_max
         # do similarity test with all previous time steps HERE you need to change prefix and suffix
-        similar = get_similar_states(q_max, t_max, Q)
+        # print("check here q final", Q_final)
+        # print("q", Q)
+        # brek
+        similar = get_similar_states(q_max, t_max, Q_final)
 
         # promote if no similar
 
         if not similar:
+            print("chech here1", Q_final)
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
-            print("after adding", Q)
+            print("chech here2", Q_final)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
+            print("after removing ", Q, Q_prev_list)
             # add new candidates stemming from this state
-            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A,
-                               pdfa)  # how to know where the next candidate comes from
+            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)  # how to know where the next candidate comes from
+            print("after adding new candidates ", Q, Q_prev_list)
         else:
             # merge candidates
             merge(similar[0], q_max, pdfa)

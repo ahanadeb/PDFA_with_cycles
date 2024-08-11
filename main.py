@@ -24,12 +24,10 @@ if __name__ == "__main__":
     pdfa = solve_mdp(pdfa, a_dict)
     for s in pdfa.states:
         print(s.VA)
-    pdfa = get_optimal_policy(pdfa, a_dict1)
-    print("optimal policy ", pdfa.policy)
+    #pdfa = get_optimal_policy(pdfa, a_dict1)
+    #print("optimal policy ", pdfa.policy)
     gr = render(pdfa, a_dict)
     #generate graph (change location)
     gr.render("./graphs/test_" + env + "_alpha_" + str(alpha))
-    tmaze = Tmaze_test(H - 1)
-    tmaze.test(pdfa, 100, H)
 
     #test_pdfa(pdfa, 100, 5)
