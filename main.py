@@ -7,8 +7,8 @@ from env.test_t_maze import Tmaze_test
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 10
-    H = 4
+    K = 20
+    H = 5
     A = 2
     env = "loop-domain"
 
@@ -30,4 +30,3 @@ if __name__ == "__main__":
     #generate graph (change location)
     gr.render("./graphs/test_" + env + "_alpha_" + str(alpha))
 
-    #test_pdfa(pdfa, 100, 5)

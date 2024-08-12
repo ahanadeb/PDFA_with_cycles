@@ -32,8 +32,7 @@ def get_suffixes(D, q,q_prev, h):
 
 def test_distinct(Q1, Q2):
     # Test similarity between candidates and safe state
-    print("traj", Q1.name,  Q1.X)
-    print("traj2", Q2.name, Q2.X)
+    print("suffixes ", Q1.X)
     S = Q1.X + list(set(Q1.X) - set(Q2.X))
     if not S:
         return True, 0, 0
