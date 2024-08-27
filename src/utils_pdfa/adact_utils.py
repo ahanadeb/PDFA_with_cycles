@@ -38,8 +38,8 @@ def test_distinct(Q1, Q2):
         return True, 0, 0
     for s in S:
         if (s in Q1.X and s not in Q2.X) or (s in Q2.X and s not in Q1.X):
-            return False, 0 , 0
-    return True, 0 ,0
+            return False, 0, 0
+    return True, 0, 0
 
 
 def cosine_similarity(a, b):
