@@ -3,15 +3,32 @@ digraph {
 	rankdir=LR
 	q0
 	q1
-	q2
-	q3
 	q4
+	q7
+	q12
+	q11
+	q10
+	q18
+	q17
+	q16
+	q9
+	q6
+	q3
+	q26
+	q25
 	fake -> q0 [style=bold]
 	q0 -> q1 [label="0,  " color=black]
-	q1 -> q2 [label="1, 1" color=black]
-	q1 -> q2 [label="0, 0" color=black]
-	q2 -> q3 [label="1, 1" color=black]
-	q2 -> q4 [label="1, 1" color=black]
-	q2 -> q3 [label="0, 0" color=black]
-	q2 -> q4 [label="0, 0" color=black]
+	q1 -> q4 [label="1, 1" color=black]
+	q1 -> q9 [label="0, 0" color=black]
+	q1 -> q6 [label="0, 0" color=black]
+	q1 -> q3 [label="0, 0" color=black]
+	q4 -> q7 [label="1, 1" color=black]
+	q4 -> q11 [label="1, 1" color=black]
+	q4 -> q17 [label="1, 1" color=black]
+	q4 -> q26 [label="1, 1" color=black]
+	q7 -> q12 [label="1, 1" color=black]
+	q7 -> q18 [label="1, 1" color=black]
+	q7 -> q10 [label="0, 0" color=black]
+	q10 -> q16 [label="0, 0" color=black]
+	q3 -> q25 [label="0, 0" color=black]
 }

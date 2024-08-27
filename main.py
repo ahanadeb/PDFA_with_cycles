@@ -7,8 +7,8 @@ from env.test_t_maze import Tmaze_test
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 20
-    H = 5
+    K = 50
+    H = 4
     A = 2
     env = "loop-domain"
 
@@ -22,8 +22,8 @@ if __name__ == "__main__":
     print(pdfa.transitions)
     #render pdfa
     pdfa = solve_mdp(pdfa, a_dict)
-    for s in pdfa.states:
-        print(s.VA)
+    # for s in pdfa.states:
+    #     print(s.VA)
     #pdfa = get_optimal_policy(pdfa, a_dict1)
     #print("optimal policy ", pdfa.policy)
     gr = render(pdfa, a_dict)

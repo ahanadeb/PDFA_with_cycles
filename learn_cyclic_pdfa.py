@@ -3,9 +3,10 @@ from src.utils_pdfa.adact_utils import *
 from src.utils_pdfa.State import State
 from env.get_ao import get_r, get_o, get_a
 from typing import Iterable
+
+
 # if isinstance(my_item, Iterable):
 #     print(True)
-
 
 
 def initialise_Q(Q, H):
@@ -24,13 +25,17 @@ def not_empty(Q):
 
 def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
     candidates = get_first_obs(first_obs)
-    print("candidates", candidates)
+    print(D[0,0,:])
     for i in range(candidates.shape[0]):
         q_c = candidates[i, :]
+        print("q_c", q_c)
         X = get_first_suffixes(D, first_obs, q_c)
+        print(X)
+        brek
         trajs = np.where(np.all(first_obs == q_c, axis=1))
         Q[0].append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
         Q_prev_list[0].append(pdfa.initial_state)
+
     return Q, Q_prev_list
 
 
@@ -63,9 +68,6 @@ def get_max_qao(Q):
 
 
 def remove_candidate_from_Q(Q, Q_prev_list, q, t):
-    print("removing", q)
-    print("Q_prev", Q_prev_list)
-    print("Q", Q)
     #THERE is a mismatch in the location where we're adding q in Q CHECK
     del Q_prev_list[t][Q[t].index(q)]
     Q[t].remove(q)
@@ -74,7 +76,7 @@ def remove_candidate_from_Q(Q, Q_prev_list, q, t):
 
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
-    Q_final[t].append(q)
+    Q_final[t + 1].append(q)
     pdfa.add_transition(Q_prev_list[t][Q[t].index(q)], get_a(q), q, get_o(q), get_r(q))
     #remove candidate from list
     return Q_final
@@ -82,11 +84,9 @@ def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
 
 def get_similar_states(q_max, t_max, Q_final):
     similar = []
-    print("Q_final", Q_final)
-    for t in range(1,t_max):
+    for t in range(0, t_max+1):
         if Q_final[t]:
             for q in Q_final[t]:
-                print("here2", q)
                 sim, threshold, v = test_distinct(q_max, q)
                 if sim:
                     similar.append(q)
@@ -96,53 +96,67 @@ def get_similar_states(q_max, t_max, Q_final):
 def merge(q1, q2, pdfa):
     q1 = merge_history(q1, q2)
     pdfa.add_transition(q1, get_a(q2), q2, get_o(q2), get_r(q2))
+    return q1
+
+
+def printn(s, Q):
+    print(s)
+    for i in range(len(Q)):
+        if Q[i]:
+            print("t: ", i)
+            for q in Q[i]:
+                print(q.name)
 
 
 def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
-    Q = [None] * H  # list of lists for all candidates
-    Q_final = [None] * H  # list of lists for final safe states
-    Q_prev_list = [None] * H
-    Q_prev_list = initialise_Q(Q_prev_list, H)
-    Q = initialise_Q(Q, H)
-    Q_final = initialise_Q(Q_final, H)
+    Q = [None] * (H + 1)  # list of lists for all candidates
+    Q_final = [None] * (H + 1)  # list of lists for final safe states
+    Q_prev_list = [None] * (H + 1)
+    Q_prev_list = initialise_Q(Q_prev_list, H + 1)
+    Q = initialise_Q(Q, H + 1)
+    Q_final = initialise_Q(Q_final, H + 1)
     # add initial pdfa state
     pdfa = PDFA(D, A, a_dict)
     q0 = pdfa.initial_state
+    q0 = get_suffixes_q0(q0)
     Q_final[0].append(q0)
-    q0.hist = list(range(K + 1))
+    q0.hist = (np.array(list(range(K + 1))),)
     # add first list of candidates
     Q, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list)
     # after this Q_c becomes the list of all candidates
-    print("before starting ", Q, Q_prev_list)
     while not_empty(Q):
-        # get most occurring qao across all times
-        # print("here", Q)
+        printn("Q_prev_list", Q_prev_list)
+        printn("Q", Q)
         q_max, t_max = get_max_qao(Q)
-        print("using candidate", q_max, " time, ", t_max)
-        # remove it after promoting
-        # Q, Q_c = remove_candidate_from_Q(Q, Q_c, Q_prev_list, q_max, t_max)
-        # get similar states by comparing to all times till t_max
-        # do similarity test with all previous time steps HERE you need to change prefix and suffix
-        # print("check here q final", Q_final)
-        # print("q", Q)
-        # brek
         similar = get_similar_states(q_max, t_max, Q_final)
 
         # promote if no similar
-
         if not similar:
-            print("chech here1", Q_final)
+            print("not similar, removing ", q_max.name)
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
-            print("chech here2", Q_final)
+            printn("Q_final", Q_final)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
-            print("after removing ", Q, Q_prev_list)
             # add new candidates stemming from this state
-            add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)  # how to know where the next candidate comes from
-            print("after adding new candidates ", Q, Q_prev_list)
-        else:
-            # merge candidates
-            merge(similar[0], q_max, pdfa)
-            Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
+            Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
+            printn("Q_prev_list", Q_prev_list)
+            printn("Q", Q)
 
+            #print("added candidates ", Q)
+        else:
+
+            print("merging ", similar[0].name, q_max.name)
+            # merge candidates
+            similar[0]= merge(similar[0], q_max, pdfa)
+            Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
+            printn("Q_prev_list", Q_prev_list)
+            printn("Q", Q)
+        #print("Q_final after adding ", Q_final)
+        # lp = lp +1
+        # if lp ==2:
+        #     brek
     print("pdfa transitions: ", pdfa.transitions)
+    print("suffixes")
+    for q in pdfa.states:
+        print(q.name, q.X)
+        print(q.hist)
     return pdfa

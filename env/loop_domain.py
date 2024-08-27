@@ -25,6 +25,13 @@ class LoopDomain:
                 self.get_next_state(a)
                 print(self.current_state)
 
+    def get_reward(prev_state, b, a):
+        if b == 'q0' and a == 'a0':
+            return 4
+        elif b == 'q1' and a == 'a1':
+            return 4
+        return 0
+
     def generate_trajs(self, K, H):
         D = np.zeros((K, H, 3))
         first_obs = np.zeros((K, 1))
@@ -32,7 +39,9 @@ class LoopDomain:
             self.intialise()
             first_obs[k, 0] = self.states.index(self.current_state)
             for h in range(H):
+                prev_state = self.current_state
                 a = random.choice(self.actions)
                 self.get_next_state(a)
-                D[k, h, :] = np.array([self.actions.index(a), self.states.index(self.current_state), 0])
+                r = self.get_reward(prev_state, a)
+                D[k, h, :] = np.array([self.actions.index(a), self.states.index(self.current_state), r])
         return D.astype(int), first_obs.astype(int)

@@ -60,7 +60,9 @@ class PDFA:
         return False
 
     def get_count(self):
-        return str(self.count)
+        r = str(self.count)
+        self.count = self.count+1
+        return r
 
 
 def check_existence(key, dic):
