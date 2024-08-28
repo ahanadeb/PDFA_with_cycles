@@ -99,11 +99,19 @@ def get_similar_states(q_max, t_max, Q_final):
 
 
 def merge(q1, q2, q_prev, pdfa):
+    if q1.name == 'q1' and q2.name== 'q6':
+        print("before", pdfa.transitions)
+        pdfa.add_transition(q1, get_a(q2), q1, get_o(q2), get_r(q2))
+        print("after", pdfa.transitions)
+
     q1 = merge_history(q1, q2)
     if q_prev == q1:
         pdfa.add_transition(q1, get_a(q2), q1, get_o(q2), get_r(q2))
+
     else:
-        pdfa.add_transition(q1, get_a(q2), q2, get_o(q2), get_r(q2))
+        if q1.name == 'q1' and q2.name == 'q6':
+            print("HERE", q1.name, q2.name, q_prev.name)
+        pdfa.add_transition(q_prev, get_a(q2), q1, get_o(q2), get_r(q2))
     return q1
 
 
@@ -168,4 +176,5 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     for q in pdfa.states:
         print(q.name, q.X)
         print(q.hist)
+    printn("Q_final", Q_final)
     return pdfa
