@@ -74,6 +74,11 @@ def remove_candidate_from_Q(Q, Q_prev_list, q, t):
 
     return Q, Q_prev_list
 
+def get_prev_state(q,t,Q, Q_prev_list):
+    ind = Q[t].index(q)
+    return Q_prev_list[t][ind]
+
+
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
     Q_final[t + 1].append(q)
@@ -93,9 +98,12 @@ def get_similar_states(q_max, t_max, Q_final):
     return similar
 
 
-def merge(q1, q2, pdfa):
+def merge(q1, q2, q_prev, pdfa):
     q1 = merge_history(q1, q2)
-    pdfa.add_transition(q1, get_a(q2), q2, get_o(q2), get_r(q2))
+    if q_prev == q1:
+        pdfa.add_transition(q1, get_a(q2), q1, get_o(q2), get_r(q2))
+    else:
+        pdfa.add_transition(q1, get_a(q2), q2, get_o(q2), get_r(q2))
     return q1
 
 
@@ -146,7 +154,8 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
 
             print("merging ", similar[0].name, q_max.name)
             # merge candidates
-            similar[0]= merge(similar[0], q_max, pdfa)
+            q_prev= get_prev_state(q_max, t_max, Q, Q_prev_list)
+            similar[0]= merge(similar[0], q_max,q_prev, pdfa)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             printn("Q_prev_list", Q_prev_list)
             printn("Q", Q)
