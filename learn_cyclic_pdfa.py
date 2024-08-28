@@ -23,30 +23,30 @@ def not_empty(Q):
     return False
 
 
-def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
+def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list, S, params):
     candidates = get_first_obs(first_obs)
     print(D[0,0,:])
     print("candidates ", candidates)
     for i in range(candidates.shape[0]):
         q_c = candidates[i, :]
         print("q_c", q_c)
-        X = get_first_suffixes(D, first_obs, q_c)
+        X, S = get_first_suffixes(D, first_obs, q_c, S, params)
         # brek
         trajs = np.where(np.all(first_obs == q_c, axis=1))
         Q[0].append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
         Q_prev_list[0].append(pdfa.initial_state)
 
-    return Q, Q_prev_list
+    return Q, Q_prev_list, S
 
 
-def add_new_candidates(D, t, q, Q, Q_prev_list, A, pdfa):
+def add_new_candidates(D, t, q, Q, Q_prev_list, A, S, params, pdfa):
     candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
     for i in range(candidates.shape[0]):
-        X = get_suffixes(D, candidates[i, :], q, t)
+        X, S = get_suffixes(D, candidates[i, :], q, t, S, params)
         trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
         Q[t + 1].append(State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs))
         Q_prev_list[t + 1].append(q)
-    return Q, Q_prev_list
+    return Q, Q_prev_list, S
 
 
 def get_max_qao(Q):
@@ -87,12 +87,12 @@ def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
     return Q_final
 
 
-def get_similar_states(q_max, t_max, Q_final):
+def get_similar_states(q_max, t_max, Q_final, params, S):
     similar = []
     for t in range(0, t_max+1):
         if Q_final[t]:
             for q in Q_final[t]:
-                sim, threshold, v = test_distinct(q_max, q)
+                sim, threshold, v = test_distinct(q_max, q, params, S)
                 if sim:
                     similar.append(q)
     return similar
@@ -124,7 +124,8 @@ def printn(s, Q):
                 print(q.name)
 
 
-def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
+def learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H):
+    S = []
     Q = [None] * (H + 1)  # list of lists for all candidates
     Q_final = [None] * (H + 1)  # list of lists for final safe states
     Q_prev_list = [None] * (H + 1)
@@ -138,13 +139,13 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     Q_final[0].append(q0)
     q0.hist = (np.array(list(range(K + 1))),)
     # add first list of candidates
-    Q, Q_prev_list = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list)
+    Q, Q_prev_list, S = get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list, S, params)
     # after this Q_c becomes the list of all candidates
     while not_empty(Q):
         printn("Q_prev_list", Q_prev_list)
         printn("Q", Q)
         q_max, t_max = get_max_qao(Q)
-        similar = get_similar_states(q_max, t_max, Q_final)
+        similar = get_similar_states(q_max, t_max, Q_final,params, S)
 
         # promote if no similar
         if not similar:
@@ -153,7 +154,7 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             printn("Q_final", Q_final)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
-            Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
+            Q, Q_prev_list, S = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A,  S, params, pdfa)
             printn("Q_prev_list", Q_prev_list)
             printn("Q", Q)
 

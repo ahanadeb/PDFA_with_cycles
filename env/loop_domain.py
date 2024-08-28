@@ -36,9 +36,9 @@ class LoopDomain:
 
     def get_reward(prev_state, b, a):
         if b == 'q0' and a == 'a0':
-            return 4
+            return 0
         elif b == 'q1' and a == 'a1':
-            return 4
+            return 0
         return 0
 
     def generate_trajs(self, K, H):

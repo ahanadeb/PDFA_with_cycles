@@ -16,7 +16,7 @@ if __name__ == "__main__":
     params = Params(0.8, 4, 2, 2, 0.1, alpha, 20, 20, 5)
     #get Dataset D
     D, first_obs, a_dict= get_env(env, K, H)
-    pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H)
+    pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H)
     #pdfa, t, sta = learn_pdfa(K, H, D, first_obs, params, a_dict1, a_dict, A)
     #brek
     print(pdfa.transitions)
