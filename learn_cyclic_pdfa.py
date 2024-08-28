@@ -26,12 +26,12 @@ def not_empty(Q):
 def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
     candidates = get_first_obs(first_obs)
     print(D[0,0,:])
+    print("candidates ", candidates)
     for i in range(candidates.shape[0]):
         q_c = candidates[i, :]
         print("q_c", q_c)
         X = get_first_suffixes(D, first_obs, q_c)
-        print(X)
-        brek
+        # brek
         trajs = np.where(np.all(first_obs == q_c, axis=1))
         Q[0].append(State('q' + pdfa.get_count(), X, A, q_c, trajs))
         Q_prev_list[0].append(pdfa.initial_state)

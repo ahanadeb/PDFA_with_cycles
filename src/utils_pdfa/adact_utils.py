@@ -113,13 +113,16 @@ def get_max_o(O):
 def get_first_suffixes(D, O, q):
 
     a = np.where(np.all(O == q, axis=1))
-    d_new2 = D[a[0], 0:, :].astype(int)
-    d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
+    d_new2 = D[a[0], 0, :].astype(int)
+    print(d_new2)
+    print(d_new2.shape)
+    # d_new2 = d_new2.reshape((d_new2.shape[0], d_new2.shape[2]))
     fr = np.unique(d_new2, axis=0)
     l = []
     for r in range(fr.shape[0]):
         l.append(str(fr[r, 0]) + str(fr[r, 1]) + str(fr[r, 2]))
-        return l
+    print("l", l)
+    return l
 
 
 def remove_candidate_first(candidates, r):
