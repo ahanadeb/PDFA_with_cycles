@@ -4,10 +4,19 @@ import random
 
 class LoopDomain:
     def __init__(self):
+        self.p0 = [0.8, 0.2]
+        self.p1 = [0.2, 0.8]
         self.states = ['q0', 'q1']
         self.actions = ['a0', 'a1']
         self.initial_state = 'q0'
         self.current_state = None
+
+    def get_action(self):
+        if self.current_state == 'q0':
+            return random.choices(self.actions, self.p0, k=1)[0]
+        else:
+            return random.choices(self.actions, self.p1, k=1)[0]
+
 
     def intialise(self):
         self.current_state = self.initial_state
@@ -20,7 +29,7 @@ class LoopDomain:
             self.intialise()
             print(self.current_state)
             for h in range(H):
-                a = random.choice(self.actions)
+                a = self.get_action()
                 print("action: ", a)
                 self.get_next_state(a)
                 print(self.current_state)
@@ -40,8 +49,10 @@ class LoopDomain:
             first_obs[k, 0] = self.states.index(self.current_state)
             for h in range(H):
                 prev_state = self.current_state
-                a = random.choice(self.actions)
+                a = self.get_action()
                 self.get_next_state(a)
                 r = self.get_reward(prev_state, a)
                 D[k, h, :] = np.array([self.actions.index(a), self.states.index(self.current_state), r])
+
+
         return D.astype(int), first_obs.astype(int)
