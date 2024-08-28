@@ -59,10 +59,10 @@ def get_env(env, K, H):
 
 
     elif env == "loop-domain":
-        a_dict={'a0':0, 'a1':1}
+        a_dict={0:0, 1:1}
         # a_dict1 = { 0: 'a0', 1: 'a1'}
         loop = LoopDomain()
-        D, first_obs= loop.generate_trajs(K, H)
+        D, first_obs = loop.generate_trajs(K, H)
 
         return D.astype(int), first_obs, a_dict
 

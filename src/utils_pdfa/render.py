@@ -22,8 +22,9 @@ def render(pdfa, a_dict):
                 label += f", {replace_c(pdfa.transitions[s][a][s1])}"
                 c="black"
                 if a in a_dict:
-                    if pdfa.policy[s] == a:
-                        c="red"
+                    if s!='q0':
+                        if pdfa.policy[s] == a:
+                            c="red"
                     else:
                         c="black"
 

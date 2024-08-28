@@ -8,7 +8,7 @@ from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
     K = 50
-    H = 4
+    H = 6
     A = 2
     env = "loop-domain"
 
@@ -22,9 +22,10 @@ if __name__ == "__main__":
     print(pdfa.transitions)
     #render pdfa
     pdfa = solve_mdp(pdfa, a_dict)
-    # for s in pdfa.states:
-    #     print(s.VA)
-    #pdfa = get_optimal_policy(pdfa, a_dict1)
+    for s in pdfa.states:
+        print(s.VA)
+    pdfa = get_optimal_policy(pdfa, a_dict) #a_dict1 for other cases
+    print(pdfa.policy)
     #print("optimal policy ", pdfa.policy)
     gr = render(pdfa, a_dict)
     #generate graph (change location)
