@@ -10,7 +10,7 @@ if __name__ == "__main__":
     H = 6
     A = 2
     env = "loop-domain"
-
+    # for looop-domain works with alpha 0.5
     alpha = 0.5
     params = Params(0.8, 4, 2, 2, 0.1, alpha, 20, 20, 15)
     #get Dataset D
