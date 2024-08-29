@@ -4,8 +4,8 @@ import random
 
 class LoopDomain:
     def __init__(self):
-        self.p0 = [0.8, 0.2]
-        self.p1 = [0.2, 0.8]
+        self.p0 = [0.7, 0.3]
+        self.p1 = [0.3, 0.7]
         self.states = ['q0', 'q1']
         self.actions = ['a0', 'a1']
         self.initial_state = 'q0'

@@ -1,5 +1,4 @@
 from src.utils_pdfa.render import render
-from learn_pdfa import learn_pdfa
 from src.utils_pdfa.params import Params
 from src.utils_pdfa.rl_solve import solve_mdp, get_optimal_policy
 from env.get_env import get_env
@@ -7,13 +6,13 @@ from env.test_t_maze import Tmaze_test
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 50
+    K = 100
     H = 6
     A = 2
     env = "loop-domain"
 
-    alpha = 1.6
-    params = Params(0.8, 4, 2, 2, 0.1, alpha, 20, 20, 5)
+    alpha = 0.5
+    params = Params(0.8, 4, 2, 2, 0.1, alpha, 20, 20, 15)
     #get Dataset D
     D, first_obs, a_dict= get_env(env, K, H)
     pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H)

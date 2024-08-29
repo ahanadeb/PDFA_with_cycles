@@ -24,7 +24,7 @@ def render(pdfa, a_dict):
                 if a in a_dict:
                     if s!='q0':
                         if pdfa.policy[s] == a:
-                            c="red"
+                            c="black"
                     else:
                         c="black"
 

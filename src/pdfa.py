@@ -6,7 +6,7 @@ class PDFA:
         self.transitions = {}
         self.states = []
         self.c_states = []
-        self.initial_state = State('q0', D, A, 0, None) #s, t,A,c, h=None):
+        self.initial_state = State('q0', D, A, 0, 0, None) #s, t,A,c, h=None):
         self.states.append(self.initial_state)
         self.D = D
         self.count = 1
