@@ -4,11 +4,6 @@ from src.utils_pdfa.State import State
 from env.get_ao import get_r, get_o, get_a
 from typing import Iterable
 
-
-# if isinstance(my_item, Iterable):
-#     print(True)
-
-
 def initialise_Q(Q, H):
     for h in range(H):
         Q[h] = []

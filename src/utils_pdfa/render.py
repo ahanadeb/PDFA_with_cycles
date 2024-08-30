@@ -5,7 +5,7 @@ import graphviz
 hex_list = [ "#fff5f5", "#ffe3e3", "#ffa8a8", "#fa5252"]
 
 
-def render(pdfa, a_dict):
+def render(pdfa, a_dict, a_dict1):
     graph = graphviz.Digraph(format="png")
     graph.node("fake", style="invisible")
     graph.attr(rankdir="LR")
@@ -23,7 +23,7 @@ def render(pdfa, a_dict):
                 c="black"
                 if a in a_dict:
                     if s!='q0':
-                        if pdfa.policy[s] == a:
+                        if pdfa.policy[s] == a_dict1[a]:
                             c="red"
                     else:
                         c="black"

@@ -54,7 +54,6 @@ class Prison_guard():
     def simulate(self, K, H):
         D = np.zeros((K, H, 5))
         first_obs = np.zeros((K, 3))
-
         for k in range(K):
             self.guard_pos = None
             self.set_initial_state()
@@ -71,7 +70,6 @@ class Prison_guard():
                     self.switch_prob()
                     self.set_guard_pos()
             self.current_state = None
-
         return D.astype(int), first_obs.astype(int)
 
 
