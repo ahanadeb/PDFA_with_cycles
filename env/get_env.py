@@ -56,14 +56,9 @@ def get_env(env, K, H):
         # a_dict1 = { 0: 'a0', 1: 'a1'}
         loop = LoopDomain()
         D, first_obs = loop.generate_trajs(K, H)
-
         return D.astype(int), first_obs, a_dict
-
-
     else:
         raise ValueError("Environment not found")
-
-
 
 
 def load_data(path, K, H):

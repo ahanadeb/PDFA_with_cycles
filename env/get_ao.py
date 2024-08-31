@@ -3,13 +3,14 @@ def get_a(q):
 
 
 def get_o(q):
-    if len(q.c) > 3:
-        return str(q.c[1]) + "," + str(q.c[2]) + "," + str(q.c[3])
+    if len(q.c) > 1:
+        return q.c[1]
     else:
-        return str(q.c[0]) + "," + str(q.c[1]) + "," + str(q.c[2])
+        obs= ' '
+        return obs
 
 
 def get_r(q):
-    if len(q.c) > 4:
-        return q.c[4]
+    if len(q.c) > 1:
+        return q.c[2]
     return 0

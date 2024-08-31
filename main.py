@@ -6,9 +6,9 @@ from learn_cyclic_pdfa import learn_cyclic_pdfa
 if __name__ == "__main__":
     K = 100
     H = 5
-    A = 2
-    env = "prison-guard"
-    alpha = "corridor"
+    A = 4
+    env = "t-maze"
+    alpha = "t-maze"
     #get Dataset D
     D, first_obs, a_dict1, a_dict = get_env(env, K, H)
     pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H)

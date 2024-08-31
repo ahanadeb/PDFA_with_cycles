@@ -113,12 +113,12 @@ def printn(s, Q):
 
 
 def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
-    Q = [None] * (H + 1)  # list of lists for all candidates
-    Q_final = [None] * (H + 1)  # list of lists for final safe states
-    Q_prev_list = [None] * (H + 1)
-    Q_prev_list = initialise_Q(Q_prev_list, H + 1)
-    Q = initialise_Q(Q, H + 1)
-    Q_final = initialise_Q(Q_final, H + 1)
+    Q = [None] * (H + 5)  # list of lists for all candidates
+    Q_final = [None] * (H + 5)  # list of lists for final safe states
+    Q_prev_list = [None] * (H + 5)
+    Q_prev_list = initialise_Q(Q_prev_list, H + 5)
+    Q = initialise_Q(Q, H + 5)
+    Q_final = initialise_Q(Q_final, H + 5)
     # add initial pdfa state
     pdfa = PDFA(D, A, a_dict)
     q0 = pdfa.initial_state
@@ -140,8 +140,9 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
             Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
-            # printn("Q_prev_list", Q_prev_list)
-            # printn("Q", Q)
+            print("after adding new candidates")
+            printn("Q_prev_list", Q_prev_list)
+            printn("Q", Q)
 
         else:
 
@@ -150,6 +151,8 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             q_prev= get_prev_state(q_max, t_max, Q, Q_prev_list)
             similar[0]= merge(similar[0], q_max,q_prev, pdfa)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
+            # if not (q_max.c[2]==4 or q_max.c[2]==-1):
+            #     Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
             # printn("Q_prev_list", Q_prev_list)
             # printn("Q", Q)
         #print("Q_final after adding ", Q_final)
