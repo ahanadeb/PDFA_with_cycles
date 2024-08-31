@@ -17,15 +17,6 @@ def get_env(env, K, H):
 
         return D, first_obs, o_dict1, a_dict1
 
-    elif env == "Tiger-3D":
-        H = 10
-        o_dict= {'tiger-left':0, 'tiger-mid':1, 'tiger-right':2}
-        a_dict = {'listen-left':0, 'listen-mid':1, 'listen-right':2, 'open-left':3, 'open-mid':4, 'open-right':5, 'halt':6}
-        o_dict1 = {0:'tiger-left', 1: 'tiger-mid', 2: 'tiger-right'}
-        a_dict1 = {0:'listen-left', 1:'listen-mid', 2:'listen-right', 3:'open-left', 4:'open-mid', 5:'open-right', 6:'halt'}
-        D = load_data('/Users/ahanadeb/Documents/books/RL/PhD/bisimulation/PyPOMDP/pypomdp/environments/tiger/', K, H)
-
-        return D, o_dict1, a_dict1
 
     elif env == "basic-domain":
         o_dict = {'o1': 0, 'o2': 1, 'o3': 2, 'o4':3}
@@ -41,6 +32,8 @@ def get_env(env, K, H):
         pg = Prison_guard(1, 5)
         D, first_obs = pg.simulate(K, H)
         return D.astype(int), first_obs, a_dict1, a_dict
+
+
     elif env == "t-maze":
         a_dict = {'N': 0, 'S': 1, 'E':2, 'W': 3}
         a_dict1 = {0: 'N', 1: 'S', 2: 'E', 3: 'W'}

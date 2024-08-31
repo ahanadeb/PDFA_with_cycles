@@ -14,9 +14,11 @@ if __name__ == "__main__":
     pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H)
     print(pdfa.transitions)
     #render pdfa
-    pdfa = solve_mdp(pdfa, a_dict)
+    pdfa = solve_mdp(pdfa, a_dict1)
     for s in pdfa.states:
         print(s.A)
+    for s in pdfa.states:
+        print(s.VA)
     pdfa = get_optimal_policy(pdfa, a_dict1) #a_dict1 for other cases
     print(pdfa.policy)
     print("optimal policy ", pdfa.policy)

@@ -10,6 +10,6 @@ def get_o(q):
 
 
 def get_r(q):
-    if len(q.c) > 3:
+    if len(q.c) > 4:
         return q.c[4]
     return 0

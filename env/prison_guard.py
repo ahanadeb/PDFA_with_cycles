@@ -53,7 +53,7 @@ class Prison_guard():
 
     def simulate(self, K, H):
 
-        D = np.zeros((K, H+1, 5))
+        D = np.zeros((K, H, 5))
         first_obs = np.zeros((K, 3))
         for k in range(K):
             self.guard_pos = None
@@ -63,7 +63,11 @@ class Prison_guard():
             for h in range(H):
                 a = random.choice(A)
                 next_s, r, enemy = self.get_next_state(a)
+                #D[k, h, :] = np.array([a_dict[a], next_s[0], next_s[1], enemy, r])
+
+
                 D[k, h, :] = np.array([a_dict[a], next_s[0], next_s[1], enemy, r])
+
                 if enemy == 1:
                     self.switch_prob()
                     self.set_guard_pos()

@@ -21,8 +21,9 @@ def render(pdfa, a_dict, a_dict1):
                 label = f"{a}"
                 label += f", {replace_c(pdfa.transitions[s][a][s1])}"
                 c="black"
-                if a in a_dict:
+                if a in a_dict1:
                     if s!='q0':
+                        print("rrb", pdfa.policy[s], a)
                         if pdfa.policy[s] == a_dict1[a]:
                             c="red"
                     else:

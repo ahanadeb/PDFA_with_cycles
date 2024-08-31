@@ -29,8 +29,8 @@ def test_distinct(Q1, Q2):
         print("different")
         return False, 0, 0
 
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (norm(a) * norm(b))
+# def cosine_similarity(a, b):
+#     return np.dot(a, b) / (norm(a) * norm(b))
 
 
 
