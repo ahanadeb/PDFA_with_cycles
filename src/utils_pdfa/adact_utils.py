@@ -46,9 +46,9 @@ def test_distinct(Q1, Q2, params, S):
     S.sort(key=len)
 
     thres = np.sqrt(.5 * np.log(2.04 / params.alpha)) * (1 / np.sqrt(Q1.n) + 1 / np.sqrt(Q2.n))
-    #print(S,Q1.max_traj, Q2.max_traj , Q1.name, Q2.name)
+    print(S,Q1.max_traj, Q2.max_traj , Q1.name, Q2.name)
     for s in S:
-        #print("s", s, len(s))
+        print("s", s, len(s))
         if min(Q1.max_traj, Q2.max_traj) == 0:
             return True, 0, 0
         if len(s) < min(Q1.max_traj, Q2.max_traj):
@@ -56,9 +56,9 @@ def test_distinct(Q1, Q2, params, S):
             # get upperbounds on how many times s occurs in X
             c1 = Q1.X.query(s)
             c2 = Q2.X.query(s)
-            # print("here", c1, c2, Q1.n, Q2.n)
-            # print(np.abs(c1 / Q1.n - c2 / Q2.n))
-            # print(thres)
+            print("here", c1, c2, Q1.n, Q2.n)
+            print(np.abs(c1 / Q1.n - c2 / Q2.n))
+            print(thres)
 
 
             if np.abs(c1 / Q1.n - c2 / Q2.n) > thres:

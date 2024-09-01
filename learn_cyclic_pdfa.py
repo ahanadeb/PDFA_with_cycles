@@ -36,6 +36,7 @@ def add_new_candidates(D, t, q, Q, Q_prev_list, A, S, params, pdfa):
     for i in range(candidates.shape[0]):
         X, S , n , f = get_suffixes(D, candidates[i, :], q, t, S, params)
         trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
+        trajs = remove_nc(trajs, q.hist[0])
         q_new = State('q' + pdfa.get_count(), X, A, candidates[i, :],n, trajs)
         q_new.X2 = f
         Q[t + 1].append(q_new)
@@ -47,6 +48,7 @@ def add_new_candidates_merge(D, t, q,q_prev, Q, Q_prev_list, A, S, params, pdfa)
     for i in range(candidates.shape[0]):
         X, S , n , f = get_suffixes(D, candidates[i, :], q, t, S, params)
         trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
+        trajs = remove_nc(trajs, q.hist[0])
         q_new = State('q' + pdfa.get_count(), X, A, candidates[i, :],n, trajs)
         q_new.X2 = f
         Q[t + 1].append(q_new)
@@ -103,9 +105,9 @@ def get_similar_states(q_max, t_max, Q_final, params, S):
 
 
 def merge(q1, q2, q_prev, pdfa):
-    if q1.name == 'q1' and q2.name== 'q6':
-        #print("before", pdfa.transitions)
-        pdfa.add_transition(q1, get_a(q2), q1, get_o(q2), get_r(q2))
+    if (not q2.X2) and q1.X2:
+        pdfa.add_transition(q_prev,  get_a(q2), pdfa.end_state, get_o(q2), get_r(q2))
+        return q1
         #print("after", pdfa.transitions)
 
     q1 = merge_history(q1, q2)
@@ -153,9 +155,7 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H):
         # promote if no similar
         if not similar:
             print("not similar, removing ", q_max.name)
-            print("different adding", pdfa.transitions)
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
-            print("done different adding", pdfa.transitions)
             # printn("Q_final", Q_final)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
@@ -169,15 +169,11 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H):
             print("merging ", similar[0].name, q_max.name)
             # merge candidates
             q_prev= get_prev_state(q_max, t_max, Q, Q_prev_list)
-            if q_max.name == 'q4':
-                print("HERERE", q_prev.name)
             similar[0]= merge(similar[0], q_max,q_prev, pdfa)
-            print(pdfa.transitions)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             if t_max!=H:
                 #HERE while adding you've to add the q_prev of q_max to the prev list. not current q_max
                 Q, Q_prev_list, S = add_new_candidates_merge(D, t_max, q_max,q_prev, Q, Q_prev_list, A, S, params, pdfa)
-            print(pdfa.transitions)
             # printn("Q_prev_list", Q_prev_list)
             # printn("Q", Q)
         #print("Q_final after adding ", Q_final)
@@ -189,5 +185,6 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H):
     # for q in pdfa.states:
     #     print(q.name, q.X)
     #     print(q.hist)
-    printn("Q_final", Q_final)
+
+
     return pdfa

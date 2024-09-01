@@ -5,8 +5,8 @@ from env.get_env import get_env
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 100
-    H = 3
+    K = 200
+    H = 5
     A = 4
     env = "t-maze"
     alpha = 0.9
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     #render pdfa
     pdfa = solve_mdp(pdfa, a_dict1)
     for s in pdfa.states:
-        print(s.A)
+        print(s.name, s.A)
     for s in pdfa.states:
         print(s.VA)
     pdfa = get_optimal_policy(pdfa, a_dict1) #a_dict1 for other cases
