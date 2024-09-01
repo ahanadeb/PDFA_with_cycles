@@ -12,6 +12,7 @@ class PDFA:
         self.count = 1
         self.a_dict = a_dict
         self.policy = {}
+        self.end_state = State('q', [], A, 0, None)
 
     def add_state(self, s):
         if self.check_existence_states(s):

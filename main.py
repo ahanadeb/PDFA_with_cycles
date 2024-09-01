@@ -4,7 +4,7 @@ from env.get_env import get_env
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 100
+    K = 200
     H = 5
     A = 4
     env = "t-maze"

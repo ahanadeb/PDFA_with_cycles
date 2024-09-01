@@ -26,6 +26,8 @@ def get_suffixes(D, q, q_prev, h):
 def test_distinct(Q1, Q2):
     # Test similarity between candidates and safe state
     # for basic domain just check next action observation
+    if Q1.name == 'q0' or Q2.name == 'q0':
+        return False, 0, 0
     print("comparing ", Q1.name, Q2.name)
     print("suffixes ", Q1.X, Q2.X)
     # if Q1.X==Q2.X:
