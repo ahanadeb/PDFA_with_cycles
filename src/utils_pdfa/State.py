@@ -1,5 +1,5 @@
 class State:
-    def __init__(self, s, t, A, c, h=None):
+    def __init__(self, s, t, A, c,n, h=None):
         self.name = s
         self.X = t
         self.V = 0
@@ -12,3 +12,5 @@ class State:
         else:
             self.hist = h
             self.n = len(self.hist[0])
+        self.max_traj = n
+        self.X2 = []

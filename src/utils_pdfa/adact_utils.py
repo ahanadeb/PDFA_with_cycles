@@ -1,42 +1,76 @@
 import numpy as np
 from numpy.linalg import norm
+from countminsketch import CountMinSketch
 
 
-def get_suffixes(D, q, q_prev, h):
+def get_suffixes(D, q, q_prev, h, S, params):
+    hist = q_prev.hist
+    f=[]
+    n=0
+    cms = CountMinSketch(params.m, params.d)
     d1 = D[:, h, :]
     a = np.where(np.all(d1 == q, axis=1))
-    a = remove_nc(a, q_prev.hist)
-    d_new = (D[:, h:, :]).astype(int)
-    # d_new2 = d_new[a[0], 1, :]
-    # fr = np.unique(d_new2, axis=0)
-    # l = []
-    #
-    # for r in range(fr.shape[0]):
-    #     l.append(str(fr[r, 0]) + str(fr[r, 1])+ str(fr[r, 2]))
+    a = remove_nc(a, hist)
+    d_new = (D[:, h + 1:, :]).astype(int)
+    for i in a[0]:
+        # single trajectory of shape hx2
+        # make it into single string
+        traj = ''
+        for j in range(0, d_new.shape[1]):
+            for p in range(0, d_new.shape[2]):
+                traj = traj + str(d_new[i, j, p])
+            if len(traj) <= params.k:
+                if n < len(traj):
+                    n = len(traj)
+                cms.add(traj)
+                f.append(traj)
+                if traj != '':
+                    if traj not in S:
+                        S.append(traj)
+            else:
+                return cms, S, n, f
+    return cms, S, n, f
 
-    d_new2 = d_new[a[0], 1:, :]
-    d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
-    fr = np.unique(d_new2, axis=0)
-    l = []
-    for r in range(fr.shape[0]):
-        l.append(str(fr[r, 0]) + str(fr[r, 1]) + str(fr[r, 2]))
-    return l
 
 
-def test_distinct(Q1, Q2):
+def test_distinct(Q1, Q2, params, S):
     # Test similarity between candidates and safe state
-    # for basic domain just check next action observation
-    print("comparing ", Q1.name, Q2.name)
-    print("suffixes ", Q1.X, Q2.X)
-    # if Q1.X==Q2.X:
-    if (not Q1.X and Q2.X) or (not Q2.X and Q1.X):
+   # print("S", S)
+    if Q1.name == 'q0' or Q2.name == 'q0':
+        return False, 0,0
+    if not S:
         return True, 0, 0
-    if set(Q1.X) <= set(Q2.X) or set(Q1.X) <= set(Q2.X):
-        print("same")
-        return True, 0, 0
-    else:
-        print("different")
-        return False, 0, 0
+    # each X is a cms
+    v1 = []
+    v2 = []
+    S.sort(key=len)
+
+    thres = np.sqrt(.5 * np.log(2.04 / params.alpha)) * (1 / np.sqrt(Q1.n) + 1 / np.sqrt(Q2.n))
+    #print(S,Q1.max_traj, Q2.max_traj , Q1.name, Q2.name)
+    for s in S:
+        #print("s", s, len(s))
+        if min(Q1.max_traj, Q2.max_traj) == 0:
+            return True, 0, 0
+        if len(s) < min(Q1.max_traj, Q2.max_traj):
+
+            # get upperbounds on how many times s occurs in X
+            c1 = Q1.X.query(s)
+            c2 = Q2.X.query(s)
+            # print("here", c1, c2, Q1.n, Q2.n)
+            # print(np.abs(c1 / Q1.n - c2 / Q2.n))
+            # print(thres)
+
+
+            if np.abs(c1 / Q1.n - c2 / Q2.n) > thres:
+                print("NOT SIMILAR ", Q1.name, Q2.name,np.abs(c1 / Q1.n - c2 / Q2.n), thres )
+                print( Q1.X2)
+                print( Q2.X2)
+                return False, thres, np.abs(c1 / Q1.n - c2 / Q2.n)
+
+            v1.append(c1 / Q1.n)
+            v2.append(c2 / Q2.n)
+
+    return True, thres, np.abs(c1 / Q1.n - c2 / Q2.n)
 
 
 # def cosine_similarity(a, b):
@@ -50,22 +84,28 @@ def merge_history(q1, q2):
     return q1
 
 
-def get_first_suffixes(D, O, q):
-    # a = np.where(np.all(O == q, axis=1))
-    # d_new2 = D[a[0], 0, :].astype(int)
-    # # d_new2 = d_new2.reshape((d_new2.shape[0], d_new2.shape[2]))
-    # fr = np.unique(d_new2, axis=0)
-    # l = []
-    # for r in range(fr.shape[0]):
-    #     l.append(str(fr[r, 0]) + str(fr[r, 1])+ str(fr[r, 2]))
+def get_first_suffixes(D, O, q, S, params):
+    # n is used to keep track of the max_trajectory length
+    n= 0
+    f= []
+    cms = CountMinSketch(params.m, params.d)
+    d_new = (D[:, 0:, :]).astype(int)
     a = np.where(np.all(O == q, axis=1))
-    d_new2 = D[a[0], 1:, :].astype(int)
-    d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
-    fr = np.unique(d_new2, axis=0)
-    l = []
-    for r in range(fr.shape[0]):
-        l.append(str(fr[r, 0]) + str(fr[r, 1]) + str(fr[r, 2]))
-    return l
+    for i in a[0]:
+        traj = ''
+        for j in range(1, d_new.shape[1]):
+            for t in range(0, d_new.shape[2]):
+                traj = traj + str(d_new[i, j, t])
+            if len(traj) <= params.k:
+                if n<len(traj):
+                    n = len(traj)
+                cms.add(traj)
+                f.append(traj)
+                if traj not in S:
+                    S.append(traj)
+            else:
+                return cms, S, n, f
+    return cms, S, n, f
 
 
 def get_first_obs(first_obs):
@@ -78,10 +118,19 @@ def remove_nc(trajs, hist):
     return (np.array(xy),)
 
 
-def get_suffixes_q0(q0):
-    l = []
+def get_suffixes_q0(q0, params, K, H):
+    cms = CountMinSketch(params.m, params.d)
+    n=0
     for i in range(q0.X.shape[0]):
+        l = ''
         for j in range(q0.X.shape[1]):
-            l.append(str(q0.X[i, j, 0]) + str(q0.X[i, j, 1]) + str(q0.X[i, j, 2]))
-    q0.X = ['0']
+            l= l +str(9) + str(9) + str(9)
+        cms.add(l)
+        if n<len(l):
+            n = len(l)
+
+    q0.X = cms
+    q0.hist = (np.array(list(range(K + 1))),)
+    q0.n = K
+    q0.max_traj = n
     return q0
