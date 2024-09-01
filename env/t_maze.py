@@ -25,8 +25,8 @@ class Tmaze:
                 #change this to restrict actions
                 A = ['E']
                 # A = ['W', 'E']
-        #return ['N','S','E','W']
-        return A
+        return ['N','S','E','W']
+        #return A
 
     def initialise(self):
         a= random.choice([0,1])

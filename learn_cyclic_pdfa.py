@@ -150,8 +150,8 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             # add new candidates stemming from this state
             Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
             print("after adding new candidates")
-            printn("Q_prev_list", Q_prev_list)
-            printn("Q", Q)
+            # printn("Q_prev_list", Q_prev_list)
+            # printn("Q", Q)
 
         else:
 

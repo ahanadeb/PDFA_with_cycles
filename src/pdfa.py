@@ -23,11 +23,11 @@ class PDFA:
 
     def add_transition(self, s, a, s1, p, r, merge=False):
         if s != self.initial_state:
-            #s.A[self.a_dict[a]] = r
+            # s.A[self.a_dict[a]] = r
 
             # if s1 not in self.states:
             s.A[a] = r
-
+            print("transition added between ", s.name, " and  ", s1.name, " and ", s.name, " has ", s.A, a, r)
 
         if check_existence(s.name, self.transitions):
             # add
