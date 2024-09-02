@@ -35,24 +35,32 @@ def add_new_candidates(D, t, q, Q, Q_prev_list, A, S, params, pdfa):
     candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
     for i in range(candidates.shape[0]):
         X, S , n , f = get_suffixes(D, candidates[i, :], q, t, S, params)
-        trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
+        trajs = np.where(np.all(D[:, t, :] == candidates[i, :], axis=1))
         trajs = remove_nc(trajs, q.hist[0])
         q_new = State('q' + pdfa.get_count(), X, A, candidates[i, :],n, trajs)
         q_new.X2 = f
         Q[t + 1].append(q_new)
         Q_prev_list[t + 1].append(q)
+        print("rwg",q_new.name, q_new.hist)
+        if not q_new.hist:
+            print("Eer")
+            brek
     return Q, Q_prev_list, S
 
 def add_new_candidates_merge(D, t, q,q_prev, Q, Q_prev_list, A, S, params, pdfa):
     candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
     for i in range(candidates.shape[0]):
         X, S , n , f = get_suffixes(D, candidates[i, :], q, t, S, params)
-        trajs = np.where(np.all(D[q.hist[0], t, :] == candidates[i, :], axis=1))
+        trajs = np.where(np.all(D[:, t, :] == candidates[i, :], axis=1))
         trajs = remove_nc(trajs, q.hist[0])
         q_new = State('q' + pdfa.get_count(), X, A, candidates[i, :],n, trajs)
         q_new.X2 = f
         Q[t + 1].append(q_new)
         Q_prev_list[t + 1].append(q_prev)
+        # print("rg",q_new.name,  q_new.hist)
+        # if not q_new.hist:
+        #     print("Eer1")
+        #     brek
     return Q, Q_prev_list, S
 def get_max_qao(Q):
     state = t = None

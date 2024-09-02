@@ -57,6 +57,7 @@ def test_distinct(Q1, Q2, params, S):
             c1 = Q1.X.query(s)
             c2 = Q2.X.query(s)
             print("here", c1, c2, Q1.n, Q2.n)
+            print(Q1.name, Q1.hist)
             print(np.abs(c1 / Q1.n - c2 / Q2.n))
             print(thres)
 
@@ -69,8 +70,8 @@ def test_distinct(Q1, Q2, params, S):
 
             v1.append(c1 / Q1.n)
             v2.append(c2 / Q2.n)
-
-    return True, thres, np.abs(c1 / Q1.n - c2 / Q2.n)
+    return True, thres, 0
+    #return True, thres, np.abs(c1 / Q1.n - c2 / Q2.n)
 
 
 # def cosine_similarity(a, b):
