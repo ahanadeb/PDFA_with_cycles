@@ -5,7 +5,7 @@ from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
     K = 5000
-    H = 5
+    H = 4
     A = 4
     env = "t-maze"
     alpha = "t-maze"

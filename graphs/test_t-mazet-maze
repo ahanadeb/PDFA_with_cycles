@@ -21,7 +21,7 @@ digraph {
 	q1 -> q [label="2, 1101 1010" color=red]
 	q1 -> q2 [label="2, 1101" color=red]
 	q1 -> q1 [label="2, 1101" color=red]
-	q1 -> q [label="1, 1101" color=black]
+	q1 -> q [label="1, 1101 1010" color=black]
 	q1 -> q2 [label="1, 1101" color=black]
 	q1 -> q [label="0, 1101 1010" color=black]
 	q1 -> q2 [label="0, 1101" color=black]
