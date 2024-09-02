@@ -36,7 +36,12 @@ def add_new_candidates(D, t, q, Q, Q_prev_list, A, pdfa):
         X = get_suffixes(D, candidates[i, :], q, t)
         trajs = np.where(np.all(D[:, t, :] == candidates[i, :], axis=1))
         trajs = remove_nc(trajs, q.hist[0])
-        Q[t + 1].append(State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs))
+        q_new= State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs)
+        if not X:
+            # merge with final state
+            pdfa.add_transition(q, get_a(q_new), pdfa.end_state, get_o(q_new), get_r(q_new))
+            return Q, Q_prev_list
+        Q[t + 1].append(q_new)
         Q_prev_list[t + 1].append(q)
     return Q, Q_prev_list
 
@@ -44,10 +49,17 @@ def add_new_candidates_merge(D, t, q, q_prev, Q, Q_prev_list, A, pdfa):
     candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
     for i in range(candidates.shape[0]):
         X = get_suffixes(D, candidates[i, :], q, t)
+
         trajs = np.where(np.all(D[:, t, :] == candidates[i, :], axis=1))
         trajs = remove_nc(trajs, q.hist[0])
-        Q[t + 1].append(State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs))
+        q_new=State('q' + pdfa.get_count(), X, A, candidates[i, :], trajs)
+        if not X:
+            #merge with final state
+            pdfa.add_transition(q_prev, get_a(q_new), pdfa.end_state, get_o(q_new), get_r(q_new))
+            return Q, Q_prev_list
+        Q[t + 1].append(q_new)
         Q_prev_list[t + 1].append(q_prev)
+
     return Q, Q_prev_list
 
 
@@ -61,10 +73,12 @@ def get_max_qao(Q):
                     if q.n > n:
                         t = i
                         state = q
+                        n=q.n
             else:
                 if Q[i].n > n:
                     t = i
                     state = Q[i]
+                    n=q.n
 
     return state, t
 
@@ -83,6 +97,7 @@ def get_prev_state(q,t,Q, Q_prev_list):
 
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
+    print("Addidin state to Q_final, t=", t)
     Q_final[t + 1].append(q)
     pdfa.add_transition(Q_prev_list[t][Q[t].index(q)], get_a(q), q, get_o(q), get_r(q))
     return Q_final
@@ -96,11 +111,13 @@ def get_similar_states(q_max, t_max, Q_final):
                 sim, threshold, v = test_distinct(q_max, q)
                 if sim:
                     similar.append(q)
+    if not similar:
+        print(q_max.name, "not similar to anything", q_max.X)
     return similar
 
 
 def merge(q1, q2, q_prev, pdfa):
-    if (not q2.X) and q1.X:
+    if (not q2.X) and q1.X :
         pdfa.add_transition(q_prev, get_a(q2), pdfa.end_state, get_o(q2), get_r(q2))
         return q1
     q1 = merge_history(q1, q2)
@@ -118,16 +135,16 @@ def printn(s, Q):
         if Q[i]:
             print("t: ", i)
             for q in Q[i]:
-                print(q.name)
+                print(q.name, q.n)
 
 
 def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     Q = [None] * (H + 1)  # list of lists for all candidates
-    Q_final = [None] * (H + 1)  # list of lists for final safe states
+    Q_final = [None] * (H + 2)  # list of lists for final safe states
     Q_prev_list = [None] * (H + 1)
     Q_prev_list = initialise_Q(Q_prev_list, H + 1)
     Q = initialise_Q(Q, H + 1)
-    Q_final = initialise_Q(Q_final, H + 1)
+    Q_final = initialise_Q(Q_final, H + 2)
     # add initial pdfa state
     pdfa = PDFA(D, A, a_dict)
     q0 = pdfa.initial_state
@@ -140,18 +157,24 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     while not_empty(Q):
         # printn("Q_prev_list", Q_prev_list)
         # printn("Q", Q)
+
         q_max, t_max = get_max_qao(Q)
+        print("CHosen q_max", q_max.name)
         similar = get_similar_states(q_max, t_max, Q_final)
         # promote if no similar
         if not similar:
             print("not similar, removing ", q_max.name)
+            print("T HERE", t_max)
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             # add new candidates stemming from this state
+            printn("Q_final", Q_final)
+
+            # print("from candidate ",get_prev_state(q_max, t_max, Q, Q_prev_list).name, " adding state ", q_max.name, " at t = ", t_max)
             Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
             print("after adding new candidates")
-            # printn("Q_prev_list", Q_prev_list)
-            # printn("Q", Q)
+            printn("Q_prev_list", Q_prev_list)
+            printn("Q", Q)
 
         else:
 
@@ -162,7 +185,11 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             if t_max != H:
                 # HERE while adding you've to add the q_prev of q_max to the prev list. not current q_max
+                print("before adding merge candidates")
+                printn("Q", Q)
                 Q, Q_prev_list = add_new_candidates_merge(D, t_max, q_max, q_prev, Q, Q_prev_list, A,pdfa)
+                print("after adding merge candidates")
+                printn("Q", Q)
             # if not (q_max.c[2]==4 or q_max.c[2]==-1):
             #     Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
             # printn("Q_prev_list", Q_prev_list)
