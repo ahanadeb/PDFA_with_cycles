@@ -25,7 +25,8 @@ def test_distinct(Q1, Q2):
     print("suffixes ", Q1.X, Q2.X)
     if (not Q1.X and Q2.X) or (not Q2.X and Q1.X):
         return False, 0, 0
-    S = Q1.X + list(set(Q1.X) - set(Q2.X))
+    S = Q1.X +Q2.X+ list(set(Q1.X) - set(Q2.X))
+    print("S", S)
     if not S:
         return True, 0, 0
     for s in S:

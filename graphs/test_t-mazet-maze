@@ -2,26 +2,35 @@ digraph {
 	fake [style=invisible]
 	rankdir=LR
 	q0
-	q1
 	q2
+	q1
+	q5
 	q
+	q89
+	q224
 	fake -> q0 [style=bold]
-	q0 -> q1 [label="1011.0,  " color=black]
 	q0 -> q2 [label="1110.0,  " color=black]
-	q2 -> q1 [label="0, 1101" color=black]
-	q2 -> q [label="0, 1101" color=black]
-	q2 -> q1 [label="1, 1101" color=black]
-	q2 -> q [label="1, 1101" color=black]
-	q2 -> q1 [label="3, 1101" color=black]
-	q2 -> q2 [label="2, 1101" color=red]
-	q2 -> q1 [label="2, 1101" color=red]
-	q2 -> q [label="2, 1101" color=red]
-	q1 -> q1 [label="0, 1101" color=black]
-	q1 -> q [label="0, 1101 1010" color=black]
+	q0 -> q1 [label="1011.0,  " color=black]
 	q1 -> q1 [label="2, 1101" color=red]
-	q1 -> q [label="2, 1101" color=red]
-	q1 -> q2 [label="2, 1101" color=red]
-	q1 -> q1 [label="1, 1101" color=black]
-	q1 -> q [label="1, 1101" color=black]
-	q1 -> q1 [label="3, 1101" color=black]
+	q1 -> q5 [label="2, 1101" color=red]
+	q1 -> q89 [label="2, 1101" color=red]
+	q1 -> q5 [label="0, 1101" color=black]
+	q1 -> q [label="0, 1101" color=black]
+	q1 -> q5 [label="1, 1101" color=black]
+	q2 -> q5 [label="1, 1101" color=black]
+	q2 -> q5 [label="0, 1101" color=black]
+	q2 -> q [label="0, 1101" color=black]
+	q2 -> q2 [label="2, 1101" color=red]
+	q2 -> q5 [label="2, 1101" color=red]
+	q2 -> q224 [label="2, 1101" color=red]
+	q5 -> q5 [label="0, 1101" color=black]
+	q5 -> q [label="0, 1101" color=black]
+	q5 -> q5 [label="2, 1101" color=red]
+	q5 -> q5 [label="1, 1101" color=black]
+	q89 -> q [label="0, 1010" color=red]
+	q89 -> q [label="1, 1010" color=black]
+	q89 -> q [label="2, 1010" color=black]
+	q224 -> q [label="0, 1010" color=black]
+	q224 -> q [label="1, 1010" color=red]
+	q224 -> q [label="2, 1010" color=black]
 }

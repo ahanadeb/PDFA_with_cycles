@@ -25,7 +25,7 @@ class Tmaze:
                 #change this to restrict actions
                 A = ['E']
                 # A = ['W', 'E']
-        return ['N','S','E','W']
+        return ['N','S','E']
         #return A
 
     def initialise(self):
@@ -40,10 +40,14 @@ class Tmaze:
             o = self.corridor_obs
             if a =='E':
                 next_s = [s[0], s[1]+1]
+                # if s[1]+1 == self.l:
+                #     o = self.T_obs
+                #     return next_s, o, -1
             elif a=='W':
                 next_s = [s[0], max(0,s[1]-1)]
             else:
                 next_s = s
+
         if s[1] == self.l:
             o = self.T_obs
             if a == 'N':

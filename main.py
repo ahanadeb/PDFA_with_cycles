@@ -2,6 +2,7 @@ from src.utils_pdfa.render import render
 from src.utils_pdfa.rl_solve import solve_mdp, get_optimal_policy
 from env.get_env import get_env
 from learn_cyclic_pdfa import learn_cyclic_pdfa
+from env.test_t_maze import Tmaze_test
 
 if __name__ == "__main__":
     K = 5000
@@ -25,4 +26,6 @@ if __name__ == "__main__":
     gr = render(pdfa, a_dict,a_dict1)
     #generate graph (change location)
     gr.render("./graphs/test_" + env + str(alpha))
+    tmaze = Tmaze_test(H - 1)
+    tmaze.test(pdfa, a_dict,100, H)
 

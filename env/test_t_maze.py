@@ -63,7 +63,7 @@ class Tmaze_test:
 
 
 
-    def test(self, pdfa, K, H):
+    def test(self, pdfa, a_dict1, K, H):
 
         R = 0
         for k in range(K):
@@ -82,8 +82,9 @@ class Tmaze_test:
                     #get action
                     a = pdfa.policy[q]
                     next_s, o, r = self.get_next_state(a, next_s)
-                    for q1 in pdfa.transitions[q][a]:
-                        if int(pdfa.transitions[q][a][q1][0]) == int(o):
+                    a1 =a_dict1[a]
+                    for q1 in pdfa.transitions[q][a1]:
+                        if int(pdfa.transitions[q][a1][q1][0]) == int(o):
                             q = q1
                     R = R + r
                     #print(q, " a: ", a)
