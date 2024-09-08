@@ -6,8 +6,8 @@ def get_suffixes(D, q, q_prev, h):
     d1 = D[:, h, :]
     a = np.where(np.all(d1 == q, axis=1))
     a = remove_nc(a, q_prev.hist)
-    d_new = (D[:, h:, :]).astype(int)
-    d_new2 = d_new[a[0], 1:, :]
+    d_new = (D[:, h+1:, :]).astype(int)
+    d_new2 = d_new[a[0], :, :]
     d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
     fr = np.unique(d_new2, axis=0)
     l = []
@@ -23,9 +23,10 @@ def test_distinct(Q1, Q2):
         return False, 0, 0
     print("comparing ", Q1.name, Q2.name)
     print("suffixes ", Q1.X, Q2.X)
-    if (not Q1.X and Q2.X) or (not Q2.X and Q1.X):
-        return False, 0, 0
-    S = Q1.X +Q2.X+ list(set(Q1.X) - set(Q2.X))
+    # if (not Q1.X and Q2.X) or (not Q2.X and Q1.X):
+    #     return False, 0, 0
+    #S1 = Q1.X +Q2.X+ list(set(Q1.X) - set(Q2.X))
+    S = Q1.X + list(set(Q2.X) - set(Q1.X))
     print("S", S)
     if not S:
         return True, 0, 0
@@ -56,7 +57,7 @@ def merge_history(q1, q2):
 
 def get_first_suffixes(D, O, q):
     a = np.where(np.all(O == q, axis=1))
-    d_new2 = D[a[0], 1:, :].astype(int)
+    d_new2 = D[a[0], 0:, :].astype(int)
     d_new2 = d_new2.reshape((d_new2.shape[0] * d_new2.shape[1], d_new2.shape[2]))
     fr = np.unique(d_new2, axis=0)
     l = []

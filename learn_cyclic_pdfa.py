@@ -31,7 +31,7 @@ def get_initial_candidates(D, first_obs, A, pdfa, Q, Q_prev_list):
 
 
 def add_new_candidates(D, t, q, Q, Q_prev_list, A, pdfa):
-    candidates = np.unique(D[q.hist[0], t, :], axis=0)  #t or t-1?
+    candidates = np.unique(D[q.hist[0], t, :], axis=0)
     for i in range(candidates.shape[0]):
         X = get_suffixes(D, candidates[i, :], q, t)
         trajs = np.where(np.all(D[:, t, :] == candidates[i, :], axis=1))
@@ -101,7 +101,7 @@ def get_prev_state(q,t,Q, Q_prev_list):
 
 
 def add_state_to_Q_final(Q_final, Q, t, q, pdfa, Q_prev_list):
-    print("Addidin state to Q_final, t=", t)
+    #print("Addidin state to Q_final, t=", t)
     Q_final[t + 1].append(q)
     pdfa.add_transition(Q_prev_list[t][Q[t].index(q)], get_a(q), q, get_o(q), get_r(q))
     return Q_final
@@ -131,15 +131,15 @@ def merge(q1, q2, q_prev, pdfa):
     else:
         #first argument is q2, second argument is the state you want to know about
         if (q_prev.name == 'q1' and q1.name == 'q2') or (q_prev.name == 'q2' and q1.name == 'q1'):
-            print("q1 = ", q1.name, " q2= ", q2.name, " q_prev= ", q_prev.name)
-            print("Here is the issue, to be merged is ", q2.name, q2.c, q2.X)
-            print("merged with ", q1.name, q1.c, q1.X)
+            # print("q1 = ", q1.name, " q2= ", q2.name, " q_prev= ", q_prev.name)
+            # print("Here is the issue, to be merged is ", q2.name, q2.c, q2.X)
+            # print("merged with ", q1.name, q1.c, q1.X)
             if not set(q2.hist[0]) <= set(q_prev.hist[0]):
 
                 print("IMPROPER subset")
                 brek
             #check if there's already intersection between q_prev and the one q2 is being compared with
-            print("INTERSECTION: ", list(set(q_prev.hist[0]).intersection(q1.hist[0])))
+            # print("INTERSECTION: ", list(set(q_prev.hist[0]).intersection(q1.hist[0])))
 
             # brek
         pdfa.add_transition(q_prev, get_a(q2), q1, get_o(q2), get_r(q2))
@@ -181,19 +181,19 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
     while not_empty(Q):
         # printn("Q_prev_list", Q_prev_list)
         # printn("Q", Q)
-        check_hist("here1", Q, Q_prev_list)
+        #check_hist("here1", Q, Q_prev_list)
         q_max, t_max = get_max_qao(Q)
        # print("CHosen q_max", q_max.name)
         similar = get_similar_states(q_max, t_max, Q_final)
         # promote if no similar
         if not similar:
             print("not similar, removing ", q_max.name)
-            print("T HERE", t_max)
+            # print("T HERE", t_max)
             Q_final = add_state_to_Q_final(Q_final, Q, t_max, q_max, pdfa, Q_prev_list)
             Q, Q_prev_list = remove_candidate_from_Q(Q, Q_prev_list, q_max, t_max)
             #check_hist("here2", Q, Q_prev_list)
             # add new candidates stemming from this state
-            printn("Q_final", Q_final)
+            # printn("Q_final", Q_final)
 
             # print("from candidate ",get_prev_state(q_max, t_max, Q, Q_prev_list).name, " adding state ", q_max.name, " at t = ", t_max)
             Q, Q_prev_list = add_new_candidates(D, t_max, q_max, Q, Q_prev_list, A, pdfa)
@@ -213,7 +213,7 @@ def learn_cyclic_pdfa(D, first_obs, A, a_dict, K, H):
            # check_hist("here5", Q, Q_prev_list)
             if t_max != H:
                 # HERE while adding you've to add the q_prev of q_max to the prev list. not current q_max
-                print("before adding merge candidates")
+                # print("before adding merge candidates")
               #  check_hist("here6", Q, Q_prev_list)
              #   printn("Q", Q)
                 Q, Q_prev_list = add_new_candidates_merge(D, t_max, q_max, q_prev, Q, Q_prev_list, A,pdfa)

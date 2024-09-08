@@ -5,6 +5,7 @@ from learn_cyclic_pdfa import learn_cyclic_pdfa
 from env.test_t_maze import Tmaze_test
 
 if __name__ == "__main__":
+    # it works for K = 15000
     K = 5000
     H = 5
     A = 4

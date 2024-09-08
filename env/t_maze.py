@@ -25,7 +25,7 @@ class Tmaze:
                 #change this to restrict actions
                 A = ['E']
                 # A = ['W', 'E']
-        return ['N','S','E']
+        return ['N','S','E','W']
         #return A
 
     def initialise(self):
@@ -68,7 +68,7 @@ class Tmaze:
             else:
                 r = -1
         if np.all(next_s==s):
-            r =-1
+            r = 0 #replace with
 
 
 

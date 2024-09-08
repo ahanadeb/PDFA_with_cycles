@@ -3,7 +3,7 @@ def get_a(q):
 
 
 def get_o(q):
-    if len(q.c) > 1:
+    if len(q.c) > 2:
         return q.c[1]
     else:
         obs= ' '
@@ -11,6 +11,6 @@ def get_o(q):
 
 
 def get_r(q):
-    if len(q.c) > 1:
+    if len(q.c) > 2:
         return q.c[2]
     return 0
