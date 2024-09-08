@@ -14,3 +14,4 @@ class State:
             self.n = len(self.hist[0])
         self.max_traj = n
         self.X2 = []
+        self.final_state = False

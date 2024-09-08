@@ -5,12 +5,12 @@ from env.get_env import get_env
 from learn_cyclic_pdfa import learn_cyclic_pdfa
 
 if __name__ == "__main__":
-    K = 5000
-    H = 5
+    K = 1000
+    H = 3
     A = 4
     env = "t-maze"
-    alpha = 0.9
-    params = Params(0.8, 4, 4, 3, 0.1, alpha, 20, 20, 100)
+    alpha = 0.5
+    params = Params(0.8, 4, 4, 3, 0.1, alpha, 20, 20, 8)
     #get Dataset D
     D, first_obs, a_dict1, a_dict = get_env(env, K, H)
     pdfa = learn_cyclic_pdfa(D, first_obs, A, a_dict,params, K, H)
